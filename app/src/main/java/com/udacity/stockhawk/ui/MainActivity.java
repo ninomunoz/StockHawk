@@ -1,7 +1,9 @@
 package com.udacity.stockhawk.ui;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -9,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         StockAdapter.StockAdapterOnClickHandler {
 
     public static final String INTENT_EXTRA_SYMBOL = "IntentExtraSymbol";
+    public static final String ACTION_INVALID_SYMBOL = "ActionInvalidSymbol";
 
     private static final int STOCK_LOADER = 0;
     @SuppressWarnings("WeakerAccess")
@@ -46,6 +50,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @BindView(R.id.error)
     TextView error;
     private StockAdapter adapter;
+    private BroadcastReceiver mInvalidSymbolReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String symbol = intent.getStringExtra(INTENT_EXTRA_SYMBOL);
+            Toast.makeText(MainActivity.this, "Unable to retrieve stock data for " + symbol, Toast.LENGTH_SHORT).show();
+        }
+    };
 
     @Override
     public void onClick(String symbol) {
@@ -86,8 +97,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 getContentResolver().delete(Contract.Quote.makeUriForStock(symbol), null, null);
             }
         }).attachToRecyclerView(stockRecyclerView);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mInvalidSymbolReceiver, new IntentFilter(ACTION_INVALID_SYMBOL));
+    }
 
+    @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mInvalidSymbolReceiver);
+        super.onPause();
     }
 
     private boolean networkUp() {

@@ -8,9 +8,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.udacity.stockhawk.data.Contract;
 import com.udacity.stockhawk.data.PrefUtils;
+import com.udacity.stockhawk.ui.MainActivity;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,8 +73,15 @@ public final class QuoteSyncJob {
             while (iterator.hasNext()) {
                 String symbol = iterator.next();
 
-
                 Stock stock = quotes.get(symbol);
+                if (stock.getCurrency() == null) { // invalid stock symbol
+                    PrefUtils.removeStock(context, symbol);
+                    Intent intent = new Intent(MainActivity.ACTION_INVALID_SYMBOL);
+                    intent.putExtra(MainActivity.INTENT_EXTRA_SYMBOL, symbol);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                    continue;
+                }
+
                 StockQuote quote = stock.getQuote();
 
                 float price = quote.getPrice().floatValue();
@@ -137,10 +146,9 @@ public final class QuoteSyncJob {
 
 
     public static synchronized void initialize(final Context context) {
-
+        System.setProperty("yahoofinance.baseurl.histquotes", "https://ichart.yahoo.com/table.csv"); // Temp fix for broken Yahoo Finance API
         schedulePeriodic(context);
         syncImmediately(context);
-
     }
 
     public static synchronized void syncImmediately(Context context) {
