@@ -23,6 +23,14 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.DetailActivity"
+            android:parentActivityName=".ui.MainActivity">
+            <!-- Parent activity metadata to support < API 16 -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.udacity.stockhawk.ui.MainActivity" />
+        </activity>
+
         <service
             android:name=".sync.QuoteIntentService"
             android:exported="false" />
