@@ -29,6 +29,8 @@ import butterknife.ButterKnife;
 
 public class DetailActivity extends AppCompatActivity {
 
+    private static final String DATASET_LABEL = "Stock Price";
+
     String mSelectedSymbol;
     @BindView(R.id.tv_detail_error) TextView tvError;
     @BindView(R.id.chart) LineChart histChart;
@@ -53,7 +55,7 @@ public class DetailActivity extends AppCompatActivity {
                 null); // sort order
 
         if (null == cursor || cursor.getCount() < 1) {
-            tvError.setText("Unable to display stock history.");
+            tvError.setText(R.string.error_no_stock_history);
         }
         else {
             if (cursor.moveToFirst()) {
@@ -71,7 +73,7 @@ public class DetailActivity extends AppCompatActivity {
                     entryCount++;
                 }
 
-                LineDataSet dataSet = new LineDataSet(entries, "Stock Price");
+                LineDataSet dataSet = new LineDataSet(entries, DATASET_LABEL);
                 dataSet.setColor(Color.BLUE);
 
                 LineData lineData = new LineData(dataSet);

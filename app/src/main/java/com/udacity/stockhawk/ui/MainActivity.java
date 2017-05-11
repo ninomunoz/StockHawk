@@ -39,7 +39,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public static final String INTENT_EXTRA_SYMBOL = "IntentExtraSymbol";
     public static final String ACTION_INVALID_SYMBOL = "ActionInvalidSymbol";
 
+    private static final String ADD_STOCK_DIALOG_FRAGMENT_TAG = "AddStockDialogFragmentTag";
     private static final int STOCK_LOADER = 0;
+
     @SuppressWarnings("WeakerAccess")
     @BindView(R.id.recycler_view)
     RecyclerView stockRecyclerView;
@@ -53,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private BroadcastReceiver mInvalidSymbolReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String symbol = intent.getStringExtra(INTENT_EXTRA_SYMBOL);
-            Toast.makeText(MainActivity.this, "Unable to retrieve stock data for " + symbol, Toast.LENGTH_SHORT).show();
+            String message = getString(R.string.error_invalid_symbol) + intent.getStringExtra(INTENT_EXTRA_SYMBOL);
+            Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void button(@SuppressWarnings("UnusedParameters") View view) {
-        new AddStockDialog().show(getFragmentManager(), "StockDialogFragment");
+        new AddStockDialog().show(getFragmentManager(), ADD_STOCK_DIALOG_FRAGMENT_TAG);
     }
 
     void addStock(String symbol) {
