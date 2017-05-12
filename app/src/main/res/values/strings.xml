@@ -36,5 +36,6 @@
 
     <!-- Content Descriptions -->
     <string name="cd_add_stock">Add stock</string>
+    <string name="cd_stock_history">Stock history graph</string>
 
 </resources>
