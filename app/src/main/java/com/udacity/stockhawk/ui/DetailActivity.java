@@ -29,6 +29,7 @@ import butterknife.ButterKnife;
 
 public class DetailActivity extends AppCompatActivity {
 
+    public static final String INTENT_EXTRA_SYMBOL = "IntentExtraSymbol";
     private static final String DATASET_LABEL = "Stock Price";
 
     String mSelectedSymbol;
@@ -42,7 +43,7 @@ public class DetailActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mSelectedSymbol = getIntent().getStringExtra(MainActivity.INTENT_EXTRA_SYMBOL);
+        mSelectedSymbol = getIntent().getStringExtra(INTENT_EXTRA_SYMBOL);
         setTitle(mSelectedSymbol);
         showHistory();
     }
